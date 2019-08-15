@@ -1,0 +1,178 @@
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="./resources/css/ext-all.css" />
+    <script type="text/javascript" src="./adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="ext-all.js"></script>
+    <style>
+    </style>
+    <script>
+        Ext.onReady(function () {
+            var checkNochoose=(activeItemId)=>{
+                if((activeItemId==1)&&((Ext.getCmp('radio1').getValue()==false&&Ext.getCmp('radio2').getValue()==false&&Ext.getCmp('radio3').getValue()==false&&Ext.getCmp('radio4').getValue()==false)||(Ext.getCmp('radio5').getValue()==false&&Ext.getCmp('radio6').getValue()==false&&Ext.getCmp('radio7').getValue()==false&&Ext.getCmp('radio8').getValue()==false)))
+                return true;
+                return false;
+            };
+            var answerfield1=new Ext.form.FormPanel({
+                id: 'answerfield-1',
+                title: 'Q1:番茄酱属于以下哪种垃圾？(单选)',
+                height: 50,
+                defaultType: 'radio',
+                items: []
+            });
+            var answerfield2=new Ext.form.FormPanel({
+                id: 'answerfield-2',
+                title: 'Q50:王大叔出门遛狗后,哪些是正确处理狗粑粑的方法？(多选)',
+                height: 50,
+                defaultType: 'checkbox',
+                items: []
+            });
+            var card0=new Ext.form.FormPanel({
+                id: 'card-0',
+                items:[{
+                        xtype:'fieldset',
+                        title:'Q1:番茄酱属于以下哪种垃圾？(单选)',
+                        height:150,
+                        defaultType:'radio',
+                        items:[{
+                            id:'radio1',
+                            boxLabel:'湿垃圾',
+                            name:'rubbish',
+                            width:'auto'
+                        },{
+                            id:'radio2',
+                            boxLabel:'干垃圾',
+                            name:'rubbish',
+                            width:'auto'
+                        },{
+                            id:'radio3',
+                            boxLabel:'有害垃圾',
+                            name:'rubbish',
+                            width:'auto'
+                        },{
+                            id:'radio4',
+                            boxLabel:'可回收物',
+                            name:'rubbish',
+                            width:'auto'
+                        }]
+                    }]
+            });
+            var card1=new Ext.form.FormPanel({
+                id: 'card-1',
+                items: [{
+                    xtype: 'fieldset',
+                    title: 'Q50:王大叔出门遛狗后,哪些是正确处理狗粑粑的方法？(多选)',
+                    height:150,
+                    defaultType: 'checkbox',
+                    items: [{
+                        id:'radio5',
+                        boxLabel: '把粑粑用废报纸包好带回家冲掉',
+                        name: '1',
+                        width: 'auto'
+                    }, {
+                        id:'radio6',
+                        boxLabel: '受污染的报纸按有害垃圾处理',
+                        name: '2',
+                        width: 'auto'
+                    }, {
+                        id:'radio7',
+                        boxLabel: '没受污染的报纸按可回收垃圾处理',
+                        name: '3',
+                        width: 'auto'
+                    }, {
+                        id:'radio8',
+                        boxLabel: '没受污染的报纸浸水后当湿垃圾处理',
+                        name: '4',
+                        width: 'auto'
+                    }]
+                }]
+            });
+            var card2=new Ext.Panel({
+                id: 'card-2',
+                items:[],
+                buttons:[{
+                    text:'submit',
+                    listeners:{
+                        'click':function(){
+                            Ext.MessageBox.alert('Congratulations!');
+                        }
+                    }
+                }]
+            });
+            var navHandler=(direction)=>{
+                var guide=Ext.getCmp('Panel').getLayout();
+                var prev=Ext.getCmp('move-prev');
+                var next=Ext.getCmp('move-next');
+                var activeItemId=parseInt(guide.activeItem.id.charAt(5));
+                if(direction==-1){
+                    if(activeItemId>0){
+                        guide.setActiveItem(activeItemId-1);
+                        if(activeItemId-1==0)
+                        prev.setDisabled(true);
+                        else prev.setDisabled(false);
+                        next.setDisabled(false);
+                    }
+                }
+                else{
+                    if(activeItemId<2){
+                        if(checkNochoose(activeItemId))
+                        Ext.MessageBox.alert("请完成所有题目！");
+                        else{
+                            guide.setActiveItem(activeItemId + 1);
+                            if (activeItemId + 1 == 2) next.setDisabled(true);
+                            else next.setDisabled(false);
+                            prev.setDisabled(false);
+                            if(activeItemId==1){
+                                var answer1=Ext.getCmp('card-0').items.items[0].items.items.filter(i=>i.checked==true);
+                                Ext.getCmp('answerfield-1').add(answer1[0]);
+                                Ext.getCmp('card-2').add(answerfield1);
+                                var answer2=Ext.getCmp('card-1').items.items[0].items.items.filter(i=>i.checked==true);
+                                answer2.forEach(i=>Ext.getCmp('answerfield-2').add(i))
+                                Ext.getCmp('card-2').add(answerfield2);
+                            }
+                        }
+                    }
+                }
+            };
+            var card = new Ext.Panel({
+                id: 'Panel',
+                title: 'Your Guider',
+                layout: 'card',
+                activeItem: 0, 
+                bodyStyle: 'padding:15px',
+                defaults: {
+                    border: false
+                },
+                bbar: [
+                    {
+                        id: 'move-prev',
+                        text: 'Back',
+                        handler: navHandler.createDelegate(this, [-1]),
+                        disabled: true
+                    },
+                    '->', 
+                    {
+                        id: 'move-next',
+                        text: 'Next',
+                        handler: navHandler.createDelegate(this, [1])
+                    }
+                ],
+                items: [card0,card1,card2]
+            });
+            var win = new Ext.Window({
+                title: 'window',
+                width: 800,
+                height: 600,
+                layout: 'fit',
+                items: [card]
+            });
+            win.show();
+        }
+        );
+    </script>
+</head>
+
+<body>
+</body>
+
+</html>
