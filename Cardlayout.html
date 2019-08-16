@@ -8,6 +8,27 @@
     </style>
     <script>
         Ext.onReady(function () {
+            var setNextPage=(guide,activeItemId,prev,next)=>{
+                guide.setActiveItem(activeItemId - 1);
+                if (activeItemId - 1 == 0)
+                prev.setDisabled(true);
+                else prev.setDisabled(false);
+                next.setDisabled(false);
+            };
+            var setAnswer=()=>{
+                var answer1 = Ext.getCmp('card-0').items.items[0].items.items.filter(i => i.checked == true);
+                Ext.getCmp('answerfield-1').html = answer1[0].boxLabel;
+                Ext.getCmp('card-2').add(answerfield1);
+                var answer2 = Ext.getCmp('card-1').items.items[0].items.items.filter(i => i.checked == true);
+                for (let i = 0; i < answer2.length; i++) {
+                    if (i != answer2.length - 1) {
+                        Ext.getCmp('answerfield-2').html = Ext.getCmp('answerfield-2').html + (i + 1) + '.' + answer2[i].boxLabel + '<br>';
+                    }
+                    else
+                        Ext.getCmp('answerfield-2').html = Ext.getCmp('answerfield-2').html + (i + 1) + '.' + answer2[i].boxLabel;
+                }
+                Ext.getCmp('card-2').add(answerfield2);
+            };
             var checkNochoose=(activeItemId)=>{
                 if((activeItemId==1)&&((Ext.getCmp('radio1').getValue()==false&&Ext.getCmp('radio2').getValue()==false&&Ext.getCmp('radio3').getValue()==false&&Ext.getCmp('radio4').getValue()==false)||(Ext.getCmp('radio5').getValue()==false&&Ext.getCmp('radio6').getValue()==false&&Ext.getCmp('radio7').getValue()==false&&Ext.getCmp('radio8').getValue()==false)))
                 return true;
@@ -106,11 +127,7 @@
                 var activeItemId=parseInt(guide.activeItem.id.charAt(5));
                 if(direction==-1){
                     if(activeItemId>0){
-                        guide.setActiveItem(activeItemId-1);
-                        if(activeItemId-1==0)
-                        prev.setDisabled(true);
-                        else prev.setDisabled(false);
-                        next.setDisabled(false);
+                        setNextPage(guide,activeItemId,prev,next);
                     }
                 }
                 else{
@@ -122,21 +139,7 @@
                             if (activeItemId + 1 == 2) next.setDisabled(true);
                             else next.setDisabled(false);
                             prev.setDisabled(false);
-                            if(activeItemId==1){
-                                var answer1=Ext.getCmp('card-0').items.items[0].items.items.filter(i=>i.checked==true);
-                                Ext.getCmp('answerfield-1').html=answer1[0].boxLabel;
-                                Ext.getCmp('card-2').add(answerfield1);
-                                var answer2=Ext.getCmp('card-1').items.items[0].items.items.filter(i=>i.checked==true);
-                                console.log(answer2);
-                                for(let i=0;i<answer2.length;i++){
-                                    if(i!=answer2.length-1){
-                                        Ext.getCmp('answerfield-2').html=Ext.getCmp('answerfield-2').html+(i+1)+'.'+answer2[i].boxLabel+'<br>';
-                                    }
-                                    else
-                                    Ext.getCmp('answerfield-2').html=Ext.getCmp('answerfield-2').html+(i+1)+'.'+answer2[i].boxLabel;
-                                }
-                                Ext.getCmp('card-2').add(answerfield2);
-                            }
+                            if(activeItemId==1) setAnswer();
                         }
                     }
                 }
