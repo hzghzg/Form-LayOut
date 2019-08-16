@@ -16,15 +16,15 @@
             var answerfield1=new Ext.form.FormPanel({
                 id: 'answerfield-1',
                 title: 'Q1:番茄酱属于以下哪种垃圾？(单选)',
-                height: 50,
-                defaultType: 'radio',
+                autoHeight:true,
                 items: []
             });
             var answerfield2=new Ext.form.FormPanel({
                 id: 'answerfield-2',
                 title: 'Q50:王大叔出门遛狗后,哪些是正确处理狗粑粑的方法？(多选)',
                 height: 50,
-                defaultType: 'checkbox',
+                autoHeight:true,
+                html:'',
                 items: []
             });
             var card0=new Ext.form.FormPanel({
@@ -124,10 +124,17 @@
                             prev.setDisabled(false);
                             if(activeItemId==1){
                                 var answer1=Ext.getCmp('card-0').items.items[0].items.items.filter(i=>i.checked==true);
-                                Ext.getCmp('answerfield-1').add(answer1[0]);
+                                Ext.getCmp('answerfield-1').html=answer1[0].boxLabel;
                                 Ext.getCmp('card-2').add(answerfield1);
                                 var answer2=Ext.getCmp('card-1').items.items[0].items.items.filter(i=>i.checked==true);
-                                answer2.forEach(i=>Ext.getCmp('answerfield-2').add(i))
+                                console.log(answer2);
+                                for(let i=0;i<answer2.length;i++){
+                                    if(i!=answer2.length-1){
+                                        Ext.getCmp('answerfield-2').html=Ext.getCmp('answerfield-2').html+(i+1)+'.'+answer2[i].boxLabel+'<br>';
+                                    }
+                                    else
+                                    Ext.getCmp('answerfield-2').html=Ext.getCmp('answerfield-2').html+(i+1)+'.'+answer2[i].boxLabel;
+                                }
                                 Ext.getCmp('card-2').add(answerfield2);
                             }
                         }
